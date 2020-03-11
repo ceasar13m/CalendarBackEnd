@@ -1,7 +1,6 @@
 package com.ainur;
 
-import com.ainur.model.Date;
-import com.ainur.model.MonthEventsList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -26,7 +25,9 @@ public class SQLRepository {
                     "event text not null);";
 
 
-    public SQLRepository() {
+    @Autowired
+    public SQLRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(CREATE_DATABASE);
@@ -35,6 +36,10 @@ public class SQLRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void Hello() {
+        System.out.println("Hello");
     }
 
 

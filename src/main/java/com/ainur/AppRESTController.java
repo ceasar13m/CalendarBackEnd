@@ -19,6 +19,7 @@ import java.io.IOException;
 public class AppRESTController {
 
     private Gson gson;
+    SQLRepository sqlRepository;
 
     public AppRESTController() {
         gson = new Gson();
@@ -36,8 +37,8 @@ public class AppRESTController {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
 
-            SQLRepository sqlRepository = new SQLRepository();
 
+            sqlRepository.Hello();
 
 
 
