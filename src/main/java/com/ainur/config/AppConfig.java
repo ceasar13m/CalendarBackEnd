@@ -1,4 +1,4 @@
-package com.ainur;
+package com.ainur.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -18,7 +18,7 @@ public class AppConfig {
     @Bean
     public DataSource dataSource(){
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName("com.mysql.jdbc.Driver");
+        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
         hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/?serverTimezone=UTC");
         hikariConfig.setUsername("root");
         hikariConfig.setPassword("kazan13m");
@@ -36,5 +36,6 @@ public class AppConfig {
 
         return dataSource;
     }
+
 }
 

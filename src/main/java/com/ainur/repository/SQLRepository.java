@@ -1,15 +1,19 @@
-package com.ainur;
+package com.ainur.repository;
 
+import com.ainur.model.Event;
+import com.ainur.model.EventDate;
+import com.ainur.model.TheDayEvents;
+import com.ainur.model.TheMonthEvents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 
 
 @Repository
 public class SQLRepository {
-
     DataSource dataSource;
 
     private static final String CREATE_DATABASE =
@@ -38,8 +42,15 @@ public class SQLRepository {
         }
     }
 
-    public void Hello() {
-        System.out.println("Hello");
+    public void addEvent(Event event) {
+        System.out.println("Add event");
+    }
+
+
+    public TheMonthEvents getTheMonthEvents(EventDate eventDate) {
+
+        System.out.println("get Events");
+        return null;
     }
 
 
