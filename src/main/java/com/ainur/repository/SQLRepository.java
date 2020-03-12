@@ -28,6 +28,9 @@ public class SQLRepository {
                     "eventDate datetime not null," +
                     "event text not null);";
 
+    private static final String ADD_EVENT =
+            "insert into events (eventDate, event) values (? , ?)";
+
 
     @Autowired
     public SQLRepository(DataSource dataSource) {
@@ -43,7 +46,14 @@ public class SQLRepository {
     }
 
     public void addEvent(Event event) {
-        System.out.println("Add event");
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(ADD_EVENT);
+//            statement.setDate(1, event.getDate());
+            statement.setString(2, event.getText());
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
