@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class TheDayEvents {
     private Date date;
-    private ArrayList<String> events = new ArrayList<>();
+    private ArrayList<Event> descriptions = new ArrayList<>();
 
     public Date getDate() {
         return date;
@@ -14,11 +14,11 @@ public class TheDayEvents {
         this.date = date;
     }
 
-    public ArrayList<String> getEvents() {
-        return events;
+    public ArrayList<Event> getDescriptions() {
+        return descriptions;
     }
 
-    public void setEvents(ArrayList<String> events) {
-        this.events = events;
+    public void setDescriptions(ArrayList<Event> descriptions) {
+        this.descriptions = descriptions;
     }
 }
