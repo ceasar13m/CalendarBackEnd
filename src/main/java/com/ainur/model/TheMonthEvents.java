@@ -13,4 +13,8 @@ public class TheMonthEvents {
         this.arrayList = arrayList;
     }
 
+    public void addDayEvent (TheDayEvents event) {
+        arrayList.add(event);
+    }
+
 }

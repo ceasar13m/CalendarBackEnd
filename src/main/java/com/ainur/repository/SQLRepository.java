@@ -9,10 +9,16 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.logging.Logger;
 
 
 @Repository
 public class SQLRepository {
+    Logger logger;
     DataSource dataSource;
 
     private static final String CREATE_DATABASE =
@@ -31,9 +37,18 @@ public class SQLRepository {
             "insert into events (eventDate, event) values (?, ?);";
 
 
+    private static final String GET_THE_DAY_EVENTS =
+            "select * from events " +
+                    "where date (event) = ? " +
+                    "and month(eventDate) = ? " +
+                    "and year (eventDate) = ?;";
+
+
+
     @Autowired
     public SQLRepository(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.logger = Logger.getLogger(SQLRepository.class.getName());
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(CREATE_DATABASE);
@@ -45,10 +60,10 @@ public class SQLRepository {
     }
 
     public void addEvent(TheDayEvents events) {
-        System.out.println("AddEvent");
+        logger.info("Add Events");
         try (Connection connection = dataSource.getConnection()) {
 
-            for (Event event: events.getDescriptions()) {
+            for (Event event : events.getDescriptions()) {
                 PreparedStatement statement = connection.prepareStatement(ADD_EVENT);
                 statement.setDate(1, new java.sql.Date(events.getDate().getTime()));
                 statement.setString(2, event.getDescription());
@@ -62,9 +77,41 @@ public class SQLRepository {
 
 
     public TheMonthEvents getTheMonthEvents(EventDate eventDate) {
+        logger.info("Get Month Events");
+        LocalDate cvDate =
+                Instant.ofEpochMilli(eventDate.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 
-        System.out.println("get Events");
-        return null;
+        try (Connection connection = dataSource.getConnection()) {
+
+            PreparedStatement statement = connection.prepareStatement(GET_THE_DAY_EVENTS);
+            TheMonthEvents monthEvents = new TheMonthEvents();
+            for (int i = 0; i < cvDate.lengthOfMonth(); i++) {
+                java.util.Date date = new java.util.Date(cvDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
+                statement.setInt(1, i+1);
+                statement.setInt(2, cvDate.getMonthValue());
+                statement.setInt(3, cvDate.getYear());
+                ResultSet resultSet = statement.executeQuery();
+                TheDayEvents theDayEvents = new TheDayEvents();
+                theDayEvents.setDate(date);
+
+                while (resultSet.next()) {
+
+                    Event event = new Event();
+                    event.setDate(date);
+                    event.setDescription(resultSet.getString(3));
+                    theDayEvents.addDayEvent(event);
+                }
+                monthEvents.addDayEvent(theDayEvents);
+            }
+
+
+            return monthEvents;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
     }
 
 
