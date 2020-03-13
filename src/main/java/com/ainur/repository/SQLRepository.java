@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
 
 
 @Repository
@@ -29,7 +28,7 @@ public class SQLRepository {
                     "event text not null);";
 
     private static final String ADD_EVENT =
-            "insert into events (eventDate, event) values (? , ?)";
+            "insert into events (eventDate, event) values (?, ?);";
 
 
     @Autowired
@@ -45,11 +44,16 @@ public class SQLRepository {
         }
     }
 
-    public void addEvent(Event event) {
+    public void addEvent(TheDayEvents events) {
+        System.out.println("AddEvent");
         try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(ADD_EVENT);
-//            statement.setDate(1, event.getDate());
-            statement.setString(2, event.getText());
+
+            for (Event event: events.getDescriptions()) {
+                PreparedStatement statement = connection.prepareStatement(ADD_EVENT);
+                statement.setDate(1, new java.sql.Date(events.getDate().getTime()));
+                statement.setString(2, event.getDescription());
+                statement.executeUpdate();
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

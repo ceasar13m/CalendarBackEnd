@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Event {
     private Date date;
-    private String text;
+    private String description;
 
     public Date getDate() {
         return date;
@@ -14,11 +14,11 @@ public class Event {
         this.date = date;
     }
 
-    public String getText() {
-        return text;
+    public String getDescription() {
+        return description;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

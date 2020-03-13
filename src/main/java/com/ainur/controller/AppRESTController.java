@@ -2,6 +2,7 @@ package com.ainur.controller;
 
 import com.ainur.model.Event;
 import com.ainur.model.EventDate;
+import com.ainur.model.TheDayEvents;
 import com.ainur.model.TheMonthEvents;
 import com.ainur.repository.SQLRepository;
 import com.google.gson.Gson;
@@ -61,8 +62,8 @@ public class AppRESTController {
     public @ResponseBody
     ResponseEntity addEvent(HttpServletRequest request) {
         try {
-            Event event = gson.fromJson(request.getReader(), Event.class);
-            sqlRepository.addEvent(event);
+            TheDayEvents events = gson.fromJson(request.getReader(), TheDayEvents.class);
+            sqlRepository.addEvent(events);
 
 
             HttpHeaders headers = new HttpHeaders();
