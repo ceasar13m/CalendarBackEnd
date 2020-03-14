@@ -21,4 +21,8 @@ public class TheDayEvents {
     public void setDescriptions(ArrayList<Event> descriptions) {
         this.descriptions = descriptions;
     }
+
+    public void addDayEvent(Event event) {
+        descriptions.add(event);
+    }
 }

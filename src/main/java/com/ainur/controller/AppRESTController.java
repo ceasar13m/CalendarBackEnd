@@ -37,13 +37,9 @@ public class AppRESTController {
     ResponseEntity <TheMonthEvents> getMonthEvents(HttpServletRequest request) {
         try {
             EventDate eventDate = gson.fromJson(request.getReader(), EventDate.class);
-            TheMonthEvents list = sqlRepository.getTheMonthEvents(eventDate);
-
-
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
-//            return new ResponseEntity(list.getArrayList(), headers, HttpStatus.OK);
-            return new ResponseEntity(headers, HttpStatus.OK);
+            return new ResponseEntity(sqlRepository.getTheMonthEvents(eventDate).getArrayList(), headers, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.FORBIDDEN);
@@ -60,12 +56,10 @@ public class AppRESTController {
     @RequestMapping("/add-event")
     @PostMapping(produces = "application/json")
     public @ResponseBody
-    ResponseEntity addEvent(HttpServletRequest request) {
+    ResponseEntity <TheMonthEvents> addEvent(HttpServletRequest request) {
         try {
             TheDayEvents events = gson.fromJson(request.getReader(), TheDayEvents.class);
             sqlRepository.addEvent(events);
-
-
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
             return new ResponseEntity(headers, HttpStatus.OK);
