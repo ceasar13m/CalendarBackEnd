@@ -39,7 +39,7 @@ public class AppRESTController {
             EventDate eventDate = gson.fromJson(request.getReader(), EventDate.class);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
-            return new ResponseEntity(sqlRepository.getTheMonthEvents(eventDate).getArrayList(), headers, HttpStatus.OK);
+            return new ResponseEntity(sqlRepository.getTheMonthEvents(eventDate), headers, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.FORBIDDEN);

@@ -39,7 +39,7 @@ public class SQLRepository {
 
     private static final String GET_THE_DAY_EVENTS =
             "select * from events " +
-                    "where date (event) = ? " +
+                    "where day (eventDate) = ? " +
                     "and month(eventDate) = ? " +
                     "and year (eventDate) = ?;";
 
@@ -83,11 +83,12 @@ public class SQLRepository {
 
         try (Connection connection = dataSource.getConnection()) {
 
+
             PreparedStatement statement = connection.prepareStatement(GET_THE_DAY_EVENTS);
             TheMonthEvents monthEvents = new TheMonthEvents();
             for (int i = 0; i < cvDate.lengthOfMonth(); i++) {
-                java.util.Date date = new java.util.Date(cvDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
-                statement.setInt(1, i+1);
+                java.util.Date date = new java.util.Date(cvDate.getYear(), cvDate.getMonthValue() - 1, i+1);
+                statement.setInt(1, cvDate.getDayOfMonth());
                 statement.setInt(2, cvDate.getMonthValue());
                 statement.setInt(3, cvDate.getYear());
                 ResultSet resultSet = statement.executeQuery();
@@ -95,13 +96,13 @@ public class SQLRepository {
                 theDayEvents.setDate(date);
 
                 while (resultSet.next()) {
-
                     Event event = new Event();
                     event.setDate(date);
                     event.setDescription(resultSet.getString(3));
                     theDayEvents.addDayEvent(event);
                 }
                 monthEvents.addDayEvent(theDayEvents);
+                cvDate = cvDate.plusDays(1);
             }
 
 
