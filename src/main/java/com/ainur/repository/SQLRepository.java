@@ -39,8 +39,7 @@ public class SQLRepository {
 
     private static final String GET_THE_DAY_EVENTS =
             "select * from events " +
-                    "where day (eventDate) = ? " +
-                    "and month(eventDate) = ? " +
+                    "where month(eventDate) = ? " +
                     "and year (eventDate) = ?;";
 
 
@@ -80,32 +79,22 @@ public class SQLRepository {
         logger.info("Get Month Events");
         LocalDate cvDate =
                 Instant.ofEpochMilli(eventDate.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-
         try (Connection connection = dataSource.getConnection()) {
-
 
             PreparedStatement statement = connection.prepareStatement(GET_THE_DAY_EVENTS);
             TheMonthEvents monthEvents = new TheMonthEvents();
-            for (int i = 0; i < cvDate.lengthOfMonth(); i++) {
-                java.util.Date date = new java.util.Date(cvDate.getYear(), cvDate.getMonthValue() - 1, i+1);
-                statement.setInt(1, cvDate.getDayOfMonth());
-                statement.setInt(2, cvDate.getMonthValue());
-                statement.setInt(3, cvDate.getYear());
+                java.util.Date date = new java.util.Date(cvDate.getYear(), cvDate.getMonthValue() - 1, cvDate.getDayOfMonth());
+                statement.setInt(1, cvDate.getMonthValue());
+                statement.setInt(2, cvDate.getYear());
                 ResultSet resultSet = statement.executeQuery();
-                TheDayEvents theDayEvents = new TheDayEvents();
-                theDayEvents.setDate(date);
 
                 while (resultSet.next()) {
                     Event event = new Event();
-                    event.setDate(date);
+                    event.setDate(resultSet.getDate(2));
                     event.setDescription(resultSet.getString(3));
-                    theDayEvents.addDayEvent(event);
+                    System.out.println(event.getDate());
+                    monthEvents.addEvent(event);
                 }
-                monthEvents.addDayEvent(theDayEvents);
-                cvDate = cvDate.plusDays(1);
-            }
-
-
             return monthEvents;
         } catch (SQLException e) {
             e.printStackTrace();

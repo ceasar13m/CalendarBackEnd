@@ -3,17 +3,17 @@ package com.ainur.model;
 import java.util.ArrayList;
 
 public class TheMonthEvents {
-    private ArrayList<TheDayEvents> arrayList = new ArrayList<>();
+    private ArrayList<Event> arrayList = new ArrayList<>();
 
-    public ArrayList<TheDayEvents> getArrayList() {
+    public ArrayList<Event> getArrayList() {
         return arrayList;
     }
 
-    public void setArrayList(ArrayList<TheDayEvents> arrayList) {
+    public void setArrayList(ArrayList<Event> arrayList) {
         this.arrayList = arrayList;
     }
 
-    public void addDayEvent (TheDayEvents event) {
+    public void addEvent (Event event) {
         arrayList.add(event);
     }
 
