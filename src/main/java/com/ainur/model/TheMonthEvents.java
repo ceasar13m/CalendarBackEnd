@@ -15,6 +15,11 @@ public class TheMonthEvents {
 
     public void addEvent (Event event) {
         arrayList.add(event);
+
+
     }
 
 }
+
+
+

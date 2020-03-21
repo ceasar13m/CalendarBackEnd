@@ -2,7 +2,6 @@ package com.ainur.controller;
 
 import com.ainur.model.Event;
 import com.ainur.model.EventDate;
-import com.ainur.model.TheDayEvents;
 import com.ainur.model.TheMonthEvents;
 import com.ainur.repository.SQLRepository;
 import com.google.gson.Gson;
@@ -53,13 +52,33 @@ public class AppRESTController {
 
 
 
+
     @RequestMapping("/add-event")
     @PostMapping(produces = "application/json")
     public @ResponseBody
-    ResponseEntity <TheMonthEvents> addEvent(HttpServletRequest request) {
+    ResponseEntity addEvent(HttpServletRequest request) {
         try {
-            TheDayEvents events = gson.fromJson(request.getReader(), TheDayEvents.class);
-            sqlRepository.addEvent(events);
+            Event event = gson.fromJson(request.getReader(), Event.class);
+            sqlRepository.addEvent(event);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Access-Control-Allow-Origin", "*");
+            return new ResponseEntity(headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
+
+    }
+
+
+
+    @RequestMapping("/delete-event")
+    @PostMapping(produces = "application/json")
+    public @ResponseBody
+    ResponseEntity deleteEvent(HttpServletRequest request) {
+        try {
+            Event event = gson.fromJson(request.getReader(), Event.class);
+            sqlRepository.deleteEvent(event);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
             return new ResponseEntity(headers, HttpStatus.OK);
