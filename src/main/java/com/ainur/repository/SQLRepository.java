@@ -2,7 +2,7 @@ package com.ainur.repository;
 
 import com.ainur.model.Event;
 import com.ainur.model.EventDate;
-import com.ainur.model.TheMonthEvents;
+import com.ainur.model.Events;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -47,6 +47,10 @@ public class SQLRepository {
                     "where id = ?;";
 
 
+    /**
+     *
+     * @param dataSource
+     */
     @Autowired
     public SQLRepository(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -61,8 +65,12 @@ public class SQLRepository {
         }
     }
 
+    /**
+     *
+     * @param event
+     */
     public void addEvent(Event event) {
-        logger.info("Add Events");
+        logger.info("Add Event: \"" + event.getDescription() + "\" at: " + event.getDate());
         Date date = new Date(event.getDate().getTime());
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(ADD_EVENT);
@@ -76,9 +84,12 @@ public class SQLRepository {
     }
 
 
-
+    /**
+     *
+     * @param event
+     */
     public void deleteEvent(Event event) {
-        logger.info("Delete Events");
+        logger.info("Delete Event: \"" + event.getDescription() + "\" at: " + event.getDate());
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_EVENT);
             statement.setLong(1, event.getId());
@@ -89,27 +100,31 @@ public class SQLRepository {
     }
 
 
-    public TheMonthEvents getTheMonthEvents(EventDate eventDate) {
-        logger.info("Get Month Events");
+    /**
+     *
+     * @param eventDate
+     * @return
+     */
+    public Events getEvents(EventDate eventDate) {
+        logger.info("Get Events");
         LocalDate cvDate =
-                Instant.ofEpochMilli(eventDate.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                Instant.ofEpochMilli(eventDate.getDate().getTime())
+                        .atZone(ZoneId.systemDefault()).toLocalDate();
         try (Connection connection = dataSource.getConnection()) {
-
             PreparedStatement statement = connection.prepareStatement(GET_EVENTS);
-            TheMonthEvents monthEvents = new TheMonthEvents();
+            Events events = new Events();
             statement.setInt(1, cvDate.getDayOfMonth());
             statement.setInt(2, cvDate.getMonthValue());
             statement.setInt(3, cvDate.getYear());
             ResultSet resultSet = statement.executeQuery();
-
             while (resultSet.next()) {
                 Event event = new Event();
                 event.setId(resultSet.getLong(1));
                 event.setDate(resultSet.getDate(2));
                 event.setDescription(resultSet.getString(3));
-                monthEvents.addEvent(event);
+                events.addEvent(event);
             }
-            return monthEvents;
+            return events;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

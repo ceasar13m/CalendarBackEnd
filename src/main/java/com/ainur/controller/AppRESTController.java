@@ -2,7 +2,7 @@ package com.ainur.controller;
 
 import com.ainur.model.Event;
 import com.ainur.model.EventDate;
-import com.ainur.model.TheMonthEvents;
+import com.ainur.model.Events;
 import com.ainur.repository.SQLRepository;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +29,20 @@ public class AppRESTController {
     }
 
 
-
-    @RequestMapping("/get-month-events")
+    /**
+     *
+     * @param request
+     * @return events
+     */
+    @RequestMapping("/get-events")
     @GetMapping(produces = "application/json")
     public @ResponseBody
-    ResponseEntity <TheMonthEvents> getMonthEvents(HttpServletRequest request) {
+    ResponseEntity <Events> getMonthEvents(HttpServletRequest request) {
         try {
             EventDate eventDate = gson.fromJson(request.getReader(), EventDate.class);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
-            return new ResponseEntity(sqlRepository.getTheMonthEvents(eventDate), headers, HttpStatus.OK);
+            return new ResponseEntity(sqlRepository.getEvents(eventDate), headers, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.FORBIDDEN);
@@ -47,11 +51,11 @@ public class AppRESTController {
     }
 
 
-
-
-
-
-
+    /**
+     *
+     * @param request
+     * @return HttpStatus
+     */
 
     @RequestMapping("/add-event")
     @PostMapping(produces = "application/json")
@@ -71,7 +75,11 @@ public class AppRESTController {
     }
 
 
-
+    /**
+     *
+     * @param request
+     * @return HttpStatus
+     */
     @RequestMapping("/delete-event")
     @PostMapping(produces = "application/json")
     public @ResponseBody
