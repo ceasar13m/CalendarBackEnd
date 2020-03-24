@@ -15,8 +15,6 @@ public class Events {
 
     public void addEvent (Event event) {
         events.add(event);
-
-
     }
 
 }

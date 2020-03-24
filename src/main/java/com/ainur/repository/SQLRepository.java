@@ -1,8 +1,7 @@
 package com.ainur.repository;
 
-import com.ainur.model.Event;
-import com.ainur.model.EventDate;
-import com.ainur.model.Events;
+import com.ainur.model.*;
+import com.ainur.model.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -42,13 +41,18 @@ public class SQLRepository {
                     "and year (eventDate) = ?;";
 
 
+    private static final String GET_COUNT =
+            "SELECT eventDate, COUNT(*) FROM events " +
+                    "where month(eventDate) = ? " +
+                    "and year(eventDate) = ? " +
+                    "GROUP BY eventDate;";
+
     private static final String DELETE_EVENT =
             "delete from events " +
                     "where id = ?;";
 
 
     /**
-     *
      * @param dataSource
      */
     @Autowired
@@ -66,16 +70,15 @@ public class SQLRepository {
     }
 
     /**
-     *
      * @param event
      */
     public void addEvent(Event event) {
         logger.info("Add Event: \"" + event.getDescription() + "\" at: " + event.getDate());
-        Date date = new Date(event.getDate().getTime());
+        java.sql.Date date = new java.sql.Date(event.getDate().getTime());
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(ADD_EVENT);
             statement.setLong(1, event.getId());
-            statement.setDate(2, date, java.util.Calendar.getInstance ());
+            statement.setDate(2, date, java.util.Calendar.getInstance());
             statement.setString(3, event.getDescription());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -85,7 +88,6 @@ public class SQLRepository {
 
 
     /**
-     *
      * @param event
      */
     public void deleteEvent(Event event) {
@@ -101,14 +103,13 @@ public class SQLRepository {
 
 
     /**
-     *
-     * @param eventDate
+     * @param date
      * @return
      */
-    public Events getEvents(EventDate eventDate) {
+    public Events getEvents(Date date) {
         logger.info("Get Events");
         LocalDate cvDate =
-                Instant.ofEpochMilli(eventDate.getDate().getTime())
+                Instant.ofEpochMilli(date.getDate().getTime())
                         .atZone(ZoneId.systemDefault()).toLocalDate();
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(GET_EVENTS);
@@ -125,6 +126,34 @@ public class SQLRepository {
                 events.addEvent(event);
             }
             return events;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
+    }
+
+
+    public Counts getEventsCounts(Date date) {
+        logger.info("Get Counts");
+        LocalDate cvDate =
+                Instant.ofEpochMilli(date.getDate().getTime())
+                        .atZone(ZoneId.systemDefault()).toLocalDate();
+        Counts counts = new Counts();
+        try (Connection connection = dataSource.getConnection()) {
+                PreparedStatement statement = connection.prepareStatement(GET_COUNT);
+                statement.setInt(1, cvDate.getMonthValue());
+                statement.setInt(2, cvDate.getYear());
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    Count count = new Count();
+                    count.setDate(resultSet.getDate(1));
+                    count.setCount(resultSet.getInt(2));
+                    counts.addCount(count);
+                }
+
+            return counts;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

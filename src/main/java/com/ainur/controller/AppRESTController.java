@@ -1,7 +1,8 @@
 package com.ainur.controller;
 
+import com.ainur.model.Counts;
 import com.ainur.model.Event;
-import com.ainur.model.EventDate;
+import com.ainur.model.Date;
 import com.ainur.model.Events;
 import com.ainur.repository.SQLRepository;
 import com.google.gson.Gson;
@@ -39,10 +40,28 @@ public class AppRESTController {
     public @ResponseBody
     ResponseEntity <Events> getMonthEvents(HttpServletRequest request) {
         try {
-            EventDate eventDate = gson.fromJson(request.getReader(), EventDate.class);
+            Date date = gson.fromJson(request.getReader(), Date.class);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
-            return new ResponseEntity(sqlRepository.getEvents(eventDate), headers, HttpStatus.OK);
+            return new ResponseEntity(sqlRepository.getEvents(date), headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
+
+    }
+
+
+
+    @RequestMapping("/get-events-counts")
+    @GetMapping(produces = "application/json")
+    public @ResponseBody
+    ResponseEntity <Counts> getMonthCounts(HttpServletRequest request) {
+        try {
+            Date date = gson.fromJson(request.getReader(), Date.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Access-Control-Allow-Origin", "*");
+            return new ResponseEntity(sqlRepository.getEventsCounts(date), headers, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.FORBIDDEN);
