@@ -18,16 +18,11 @@ public class SQLRepository {
     Logger logger;
     DataSource dataSource;
 
-    private static final String CREATE_DATABASE =
-            "create database IF NOT EXISTS calendar;";
-
-    private static final String USING_DATABASE =
-            "use calendar;";
 
     private static final String CREATE_EVENTS_TABLE =
             "CREATE TABLE if not exists events " +
                     "(id bigint not null, " +
-                    "eventDate datetime not null," +
+                    "eventDate date not null," +
                     "event text not null);";
 
     private static final String ADD_EVENT =
@@ -36,15 +31,15 @@ public class SQLRepository {
 
     private static final String GET_EVENTS =
             "select * from events " +
-                    "where day(eventDate) = ? " +
-                    "and month(eventDate) = ? " +
-                    "and year (eventDate) = ?;";
+                    "where extract(day from eventDate) = ? " +
+                    "and extract(month from eventDate) = ? " +
+                    "and extract(year from eventDate) = ?;";
 
 
     private static final String GET_COUNT =
             "SELECT eventDate, COUNT(*) FROM events " +
-                    "where month(eventDate) = ? " +
-                    "and year(eventDate) = ? " +
+                    "where extract(month from eventDate)  = ? " +
+                    "and extract(year from eventDate) = ? " +
                     "GROUP BY eventDate;";
 
     private static final String DELETE_EVENT =
@@ -61,8 +56,6 @@ public class SQLRepository {
         this.logger = Logger.getLogger(SQLRepository.class.getName());
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
-            statement.executeUpdate(CREATE_DATABASE);
-            statement.executeUpdate(USING_DATABASE);
             statement.executeUpdate(CREATE_EVENTS_TABLE);
         } catch (SQLException e) {
             e.printStackTrace();

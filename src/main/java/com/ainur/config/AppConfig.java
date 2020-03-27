@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -18,8 +19,11 @@ public class AppConfig {
     @Bean
     public DataSource dataSource(){
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/?serverTimezone=UTC");
+        hikariConfig.setDriverClassName("org.postgresql.Driver");
+        hikariConfig.setJdbcUrl(
+                "jdbc:postgresql://dbcalendar.c2r6yagr9ftn.us-east-1.rds.amazonaws.com:5432/calendar?" +
+                        "verifyServerCertificate=false&useSSL=false&" +
+                        "requireSSL=false&useLegacyDatetimeCode=false&amp&serverTimezone=UTC");
         hikariConfig.setUsername("root");
         hikariConfig.setPassword("kazan13m");
 
