@@ -1,11 +1,9 @@
 package com.ainur.controller;
 
-import com.ainur.model.Counts;
-import com.ainur.model.Event;
-import com.ainur.model.Date;
-import com.ainur.model.Events;
+import com.ainur.model.*;
 import com.ainur.repository.SQLRepository;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,7 +38,8 @@ public class AppRESTController {
     public @ResponseBody
     ResponseEntity <Events> getMonthEvents(HttpServletRequest request) {
         try {
-            Date date = gson.fromJson(request.getReader(), Date.class);
+            Date date = new Date();
+            date.setDate(new java.util.Date(gson.fromJson(request.getReader(), LongDate.class).getDate()));
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
             return new ResponseEntity(sqlRepository.getEvents(date), headers, HttpStatus.OK);
@@ -58,7 +57,8 @@ public class AppRESTController {
     public @ResponseBody
     ResponseEntity <Counts> getMonthCounts(HttpServletRequest request) {
         try {
-            Date date = gson.fromJson(request.getReader(), Date.class);
+            Date date = new Date();
+            date.setDate(new java.util.Date(gson.fromJson(request.getReader(), LongDate.class).getDate()));
             HttpHeaders headers = new HttpHeaders();
             headers.add("Access-Control-Allow-Origin", "*");
             return new ResponseEntity(sqlRepository.getEventsCounts(date), headers, HttpStatus.OK);

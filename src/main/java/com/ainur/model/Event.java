@@ -1,11 +1,9 @@
 package com.ainur.model;
-
-import java.time.LocalDate;
 import java.util.Date;
 
 public class Event {
     private long id;
-    private Date date;
+    private long date;
     private String description;
 
     public long getId() {
@@ -17,10 +15,11 @@ public class Event {
     }
 
     public Date getDate() {
-        return date;
+        return new Date(this.date
+        );
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 

@@ -22,7 +22,7 @@ public class SQLRepository {
     private static final String CREATE_EVENTS_TABLE =
             "CREATE TABLE if not exists events " +
                     "(id bigint not null, " +
-                    "eventDate date not null," +
+                    "eventDate timestamp not null," +
                     "event text not null);";
 
     private static final String ADD_EVENT =
@@ -67,11 +67,11 @@ public class SQLRepository {
      */
     public void addEvent(Event event) {
         logger.info("Add Event: \"" + event.getDescription() + "\" at: " + event.getDate());
-        java.sql.Date date = new java.sql.Date(event.getDate().getTime());
+        java.sql.Timestamp date = new java.sql.Timestamp(event.getDate().getTime());
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(ADD_EVENT);
             statement.setLong(1, event.getId());
-            statement.setDate(2, date, java.util.Calendar.getInstance());
+            statement.setTimestamp(2, date, java.util.Calendar.getInstance());
             statement.setString(3, event.getDescription());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -114,7 +114,7 @@ public class SQLRepository {
             while (resultSet.next()) {
                 Event event = new Event();
                 event.setId(resultSet.getLong(1));
-                event.setDate(resultSet.getDate(2));
+                event.setDate(resultSet.getTimestamp(2).getTime());
                 event.setDescription(resultSet.getString(3));
                 events.addEvent(event);
             }
@@ -141,7 +141,7 @@ public class SQLRepository {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     Count count = new Count();
-                    count.setDate(resultSet.getDate(1));
+                    count.setDate(resultSet.getTimestamp(1).getTime());
                     count.setCount(resultSet.getInt(2));
                     counts.addCount(count);
                 }

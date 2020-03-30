@@ -3,14 +3,14 @@ package com.ainur.model;
 import java.util.Date;
 
 public class Count {
-    private Date date;
+    private long date;
     private int count;
 
     public Date getDate() {
-        return date;
+        return new Date(this.date);
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
