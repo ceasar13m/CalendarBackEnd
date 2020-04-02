@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 @Repository
 public class SQLRepository {
     Logger logger;
+
+    @Autowired
     DataSource dataSource;
 
 
